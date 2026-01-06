@@ -1,44 +1,45 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
   <meta charset="UTF-8">
-  <title>PUMPS AI — To The Infinity</title>
-  <script src="https://cdn.jsdelivr.net/npm/phaser@3/dist/phaser.js"></script>
-  <style>
-    body { margin:0; background:black; }
-  </style>
+  <title>PUMPS AI GAME</title>
+  <script src="https://cdn.jsdelivr.net/npm/phaser@3.55.2/dist/phaser.js"></script>
 </head>
-<body>
+
+<body style="margin:0; background:black;">
+
 <script>
 const config = {
   type: Phaser.AUTO,
   width: 360,
   height: 640,
-  backgroundColor: "#000000",
+  backgroundColor: '#000000',
   scene: {
-    preload,
-    create,
-    update
+    preload: preload,
+    create: create,
+    update: update
   }
 };
 
-const game = new Phaser.Game(config);
+let game = new Phaser.Game(config);
 let player;
 
 function preload() {
-  this.load.image('player', 'https://i.imgur.com/6X12QZB.png');
+  this.load.image(
+    'player',
+    'https://upload.wikimedia.org/wikipedia/commons/3/3a/Cat03.jpg'
+  );
 }
 
 function create() {
   player = this.add.image(180, 500, 'player');
-  this.input.on('pointermove', p => {
-    player.x = p.x;
-  });
+  player.setScale(0.2);
 }
 
 function update() {
   player.y -= 0.3;
 }
 </script>
+
 </body>
 </html>
