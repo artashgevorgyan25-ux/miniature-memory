@@ -1,16 +1,17 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>PUMPS AI — PUMP TO INFINITY</title>
+  <title>PUMPS AI — Pump To Infinity</title>
   <script src="https://cdn.jsdelivr.net/npm/phaser@3.55.2/dist/phaser.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 
 <body style="margin:0; background:black;">
 
 <script>
 let player;
-let coins;
+let coins = [];
 let score = 0;
 let scoreText;
 let speed = 2;
@@ -22,42 +23,41 @@ const config = {
   height: 640,
   backgroundColor: '#000000',
   scene: {
-    preload,
-    create,
-    update
+    preload: preload,
+    create: create,
+    update: update
   }
 };
 
 new Phaser.Game(config);
 
+// ===== ЗАГРУЗКА =====
 function preload() {
-  this.load.image(
-    'player',
-    'https://upload.wikimedia.org/wikipedia/commons/3/3a/Cat03.jpg'
-  );
-
+  this.load.image('player', 'pumps-ai.png');
   this.load.image(
     'coin',
     'https://upload.wikimedia.org/wikipedia/commons/8/8a/Gold_coin_icon.png'
   );
 }
 
+// ===== СОЗДАНИЕ =====
 function create() {
-  player = this.add.image(180, 500, 'player').setScale(0.2);
+  // герой
+  player = this.add.image(180, 500, 'player');
+  player.setScale(0.25);
 
-  coins = this.physics.add.group();
-
+  // текст счёта
   scoreText = this.add.text(10, 10, 'USDT: 0', {
     font: '20px Arial',
     fill: '#00ff99'
   });
 
   // управление
-  this.input.on('pointermove', p => {
-    player.x = p.x;
+  this.input.on('pointermove', pointer => {
+    player.x = Phaser.Math.Clamp(pointer.x, 30, 330);
   });
 
-  // кнопка PUMP
+  // PUMP MODE
   this.input.on('pointerdown', () => {
     pumpMode = true;
     speed = 6;
@@ -68,42 +68,56 @@ function create() {
     speed = 2;
   });
 
-  // спавн монет
+  // генерация монет
   this.time.addEvent({
     delay: 800,
     loop: true,
     callback: () => {
-      const coin = coins.create(
-        Phaser.Math.Between(20, 340),
-        -50,
+      const coin = this.add.image(
+        Phaser.Math.Between(30, 330),
+        -40,
         'coin'
       );
-      coin.setScale(0.08);
+      coin.setScale(0.07);
       coin.speed = Phaser.Math.Between(2, 4);
+      coins.push(coin);
     }
   });
 }
 
+// ===== ИГРОВОЙ ЦИКЛ =====
 function update() {
+  // движение вверх
   player.y -= speed;
 
-  if (player.y < -50) player.y = 700;
+  // бесконечность
+  if (player.y < -60) {
+    player.y = 700;
+  }
 
-  coins.children.iterate(coin => {
-    if (!coin) return;
+  // монеты
+  for (let i = coins.length - 1; i >= 0; i--) {
+    const coin = coins[i];
     coin.y += coin.speed + speed;
 
-    if (coin.y > 700) coin.destroy();
+    // удалить если улетела
+    if (coin.y > 700) {
+      coin.destroy();
+      coins.splice(i, 1);
+      continue;
+    }
 
+    // столкновение
     if (Phaser.Geom.Intersects.RectangleToRectangle(
       player.getBounds(),
       coin.getBounds()
     )) {
       coin.destroy();
+      coins.splice(i, 1);
       score += pumpMode ? 5 : 1;
       scoreText.setText('USDT: ' + score);
     }
-  });
+  }
 }
 </script>
 
