@@ -34,12 +34,12 @@ function preload() {
 function create() {
   player = this.add.image(180, 500, 'player');
   player.setScale(0.2);
+
+  this.input.on('pointermove', pointer => {
+    player.x = pointer.x;
+  });
 }
 
 function update() {
-  player.y -= 0.3;
+  player.y -= 1; // скорость движения вверх
 }
-</script>
-
-</body>
-</html>
