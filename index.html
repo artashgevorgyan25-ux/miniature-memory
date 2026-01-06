@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>PUMPS AI — To The Infinity</title>
+  <script src="https://cdn.jsdelivr.net/npm/phaser@3/dist/phaser.js"></script>
+  <style>
+    body { margin:0; background:black; }
+  </style>
+</head>
+<body>
+<script>
+const config = {
+  type: Phaser.AUTO,
+  width: 360,
+  height: 640,
+  backgroundColor: "#000000",
+  scene: {
+    preload,
+    create,
+    update
+  }
+};
+
+const game = new Phaser.Game(config);
+let player;
+
+function preload() {
+  this.load.image('player', 'https://i.imgur.com/6X12QZB.png');
+}
+
+function create() {
+  player = this.add.image(180, 500, 'player');
+  this.input.on('pointermove', p => {
+    player.x = p.x;
+  });
+}
+
+function update() {
+  player.y -= 0.3;
+}
+</script>
+</body>
+</html>
